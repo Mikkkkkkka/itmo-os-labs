@@ -1,0 +1,20 @@
+#!/bin/bash
+
+usernames=($(grep -E -o '^[a-z\-\_]+' /etc/passwd))
+userids=($(grep -E -o ':x:[[:digit:]]+' /etc/passwd | sed 's/:x://g'))
+
+arr=()
+
+for ((i=0; i<${#userids[*]}; i++)); do
+	arr=("${arr[@]}" "$(printf "%s %s" ${userids[$i]} ${usernames[$i]})")
+	# printf "%s %s\n" ${userids[$i]} ${usernames[$i]}
+	echo ${arr[$i]}
+done
+
+echo
+
+arr=$(echo $arr > sort -n)
+
+for name in "${arr[@]}"; do
+	echo $name
+done

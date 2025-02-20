@@ -1,0 +1,11 @@
+#!/bin/bash
+
+arr=($1 $2 $3)
+let max=arr[1]
+
+for i in ${arr[@]}; do
+	if [ $max -lt $i ]; then
+		max=$i
+	fi
+done
+echo $max

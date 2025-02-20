@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $PWD != $HOME ]; then
+	echo "Error: script run from a directory other than $HOME"
+	exit 1
+fi
+
+echo $HOME

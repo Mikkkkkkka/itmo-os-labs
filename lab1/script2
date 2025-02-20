@@ -1,0 +1,10 @@
+#!/bin/bash
+
+let str
+
+while [ "$REPLY" != "q" ]; do
+	str+=$REPLY
+	read
+done
+
+echo $str

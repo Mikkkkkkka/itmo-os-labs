@@ -1,0 +1,7 @@
+12/12/1333 SUCCESS addresse www.google.com
+12/11/1333 WARNING connection insecure www.google.com
+12/12/1333 ERROR permition denied www.google.com
+12/12/1333 SUCCESS addresse www.google.com
+12/15/1333 WARNING connection insecure www.google.com
+12/52/1333 ERROR site does not exist www.momlover.com
+12/12/1333 SUCCESS addresse www.google.com

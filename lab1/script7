@@ -1,0 +1,7 @@
+#!/bin/bash
+
+touch ./emails.lst
+
+grep -h -E -r -o '[[:alnum:]]+\@[[:alnum:]]+\.[[:alnum:]]+' /etc |
+	tr '\n' ',' |
+	sed 's/,/, /g' > ./emails.lst
