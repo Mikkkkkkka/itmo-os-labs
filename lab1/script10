@@ -1,0 +1,9 @@
+#!/bin/bash
+
+man bash |
+	tr '[:upper:]' '[:lower:]' |
+	grep -Eo '[[:alnum:]]{4,}' |
+	sort |
+	uniq -c |
+	sort -rn |
+	head -n 10 
