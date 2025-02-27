@@ -2,12 +2,5 @@
 
 touch 1.log
 
-matches=$(grep 'WARN' $1)
-for match in "${matches[@]}"; do
-	echo "$match" >> "./1.log"
-done
-
-matches=$(grep 'ERROR' $1)
-for match in "${matches[@]}"; do
-	echo "$match" >> "./1.log"
-done
+grep 'WARN' $1 >> "./1.log"
+grep 'ERROR' $1 >> "./1.log"
