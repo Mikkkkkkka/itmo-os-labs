@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ps -x | wc -l > s1out.txt
+ps -x | awk -F ' ' '{ printf("%s:%s\n", $1, $5) }' >> s1out.txt
