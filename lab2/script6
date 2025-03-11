@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# PID=4804
+
+PROCESSES=$(ls /proc | grep -E '[[:digit:]]+')
+touch tmp
+
+for PID in $PROCESSES; do
+  MEM=$(cat /proc/$PID/status 2>/dev/null |
+    grep 'VmRSS' |
+    awk '{ print $2 }')
+  if [ -z "$MEM" ]; then
+    continue
+  fi
+  printf "%s\t%s\n" $MEM $PID >>tmp
+done
+
+cat tmp |
+  sort -nr |
+  head -n 1 |
+  awk '{ printf "PID: %s\nMEM: %s\n", $2, $1}'
+
+rm -rf tmp
