@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# PID=4804
-
 PROCESSES=$(ls /proc | grep -E '[[:digit:]]+')
-touch tmp
+MEMPID=''
 
 for PID in $PROCESSES; do
   MEM=$(cat /proc/$PID/status 2>/dev/null |
@@ -12,12 +10,10 @@ for PID in $PROCESSES; do
   if [ -z "$MEM" ]; then
     continue
   fi
-  printf "%s\t%s\n" $MEM $PID >>tmp
+  MEMPID="$MEMPID$(printf "%s\t%s\n" $MEM $PID)\n"
 done
 
-cat tmp |
+echo -e $MEMPID |
   sort -nr |
   head -n 1 |
   awk '{ printf "PID: %s\nMEM: %s\n", $2, $1}'
-
-rm -rf tmp
