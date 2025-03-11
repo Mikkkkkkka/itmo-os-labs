@@ -10,7 +10,7 @@ for PID in $PROCESSES; do
   if [ -z "$MEM" ]; then
     continue
   fi
-  MEMPID="$MEMPID$(printf "%s\t%s\n" $MEM $PID)\n"
+  MEMPID+="$MEM\t$PID\n"
 done
 
 echo -e $MEMPID |
