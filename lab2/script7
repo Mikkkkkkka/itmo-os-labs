@@ -1,0 +1,40 @@
+#!bin/bash
+
+PIDBYTES=""
+ALLPIDS=$(ls /proc | grep -E '[0-9]+')
+
+for PID in $ALLPIDS; do
+  READBYTES=$(
+    cat /proc/$PID/io 2>/dev/null |
+    grep 'read_bytes' |
+    awk '{ print $2 }' |
+    tr -dc '0-9')
+  if [ -z "$READBYTES" ]; then
+    continue
+  fi
+  PIDBYTES+="$PID\t$READBYTES\n"
+done
+
+sleep 60
+PIDBYTESDIFF=""
+
+for PID in $ALLPIDS; do
+  READBYTESDELTA=$(cat /proc/$PID/io 2>/dev/null |
+    grep 'read_bytes' |
+    awk '{ print $2 }' |
+    tr -dc '0-9')
+  if [ -z "$READBYTESDELTA" ]; then
+    continue
+  fi
+  READBYTES0=$(echo -e $PIDBYTES |
+    grep "$PID" |
+    awk '{ print $2 }')
+  BYTESDIFF=$(echo "$READBYTESDELTA - $READBYTES0" | bc)
+  PIDBYTESDIFF+="$PID\t$BYTESDIFF\n"
+done
+
+echo -e $PIDBYTESDIFF |
+  awk '{ printf "%s\t%s\n", $2, $1 }' |
+  sort -rn |
+  head -n 3 |
+  awk '{ printf "PID: %s\nREADMEMDIFF: %s\n\n", $2, $1 }'
