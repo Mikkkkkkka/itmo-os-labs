@@ -1,0 +1,32 @@
+#!/bin/bash
+
+PIDPPIDART=""
+ALLPIDS=$(ls /proc | grep -E '[0-9]+')
+
+for PID in $ALLPIDS; do
+  pPID=$(
+    cat "/proc/$PID/status" 2>/dev/null |
+      grep 'PPid' |
+      awk '{ print $2 }' |
+      tr -dc '0-9'
+  )
+  sum_exec_runtime=$(
+    cat /proc/$PID/sched 2>/dev/null |
+      grep 'sum_exec_runtime' |
+      awk '{ print $3 }' |
+      tr -dc '0-9'
+  )
+  nr_switches=$(
+    cat /proc/$PID/sched 2>/dev/null |
+      grep 'nr_switches' |
+      awk '{ print $3 }' |
+      tr -dc '0-9'
+  )
+  if [ -z "$pPID" -o -z "$sum_exec_runtime" -o -z "$nr_switches" ]; then
+    continue
+  fi
+  ART=$(echo "$sum_exec_runtime / $nr_switches" | bc)
+  PIDPPIDART+="ProcessID=$PID : Parent_ProcessID=$pPID : Average_Running_Time=$ART\n"
+done
+
+echo -e $PIDPPIDART
