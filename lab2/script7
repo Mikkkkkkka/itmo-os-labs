@@ -6,9 +6,10 @@ ALLPIDS=$(ls /proc | grep -E '[0-9]+')
 for PID in $ALLPIDS; do
   READBYTES=$(
     cat /proc/$PID/io 2>/dev/null |
-    grep 'read_bytes' |
-    awk '{ print $2 }' |
-    tr -dc '0-9')
+      grep 'read_bytes' |
+      awk '{ print $2 }' |
+      tr -dc '0-9'
+  )
   if [ -z "$READBYTES" ]; then
     continue
   fi
@@ -34,7 +35,6 @@ for PID in $ALLPIDS; do
 done
 
 echo -e $PIDBYTESDIFF |
-  awk '{ printf "%s\t%s\n", $2, $1 }' |
-  sort -rn |
+  sort -rnk 2 |
   head -n 3 |
   awk '{ printf "PID: %s\nREADMEMDIFF: %s\n\n", $2, $1 }'

@@ -22,11 +22,13 @@ for PID in $ALLPIDS; do
       awk '{ print $3 }' |
       tr -dc '0-9'
   )
-  if [ -z "$pPID" -o -z "$sum_exec_runtime" -o -z "$nr_switches" ]; then
+  if [ -z "$pPID" || -z "$sum_exec_runtime" || -z "$nr_switches" ]; then
     continue
   fi
   ART=$(echo "$sum_exec_runtime / $nr_switches" | bc)
-  PIDPPIDART+="ProcessID=$PID : Parent_ProcessID=$pPID : Average_Running_Time=$ART\n"
+  PIDPPIDART+="$PID\t$pPID\t$ART\n"
 done
 
-echo -e $PIDPPIDART
+echo -e $PIDPPIDART |
+  sort -nk 2 |
+  awk '{ printf "ProcessID=%s : Parent_ProcessID=%s : Awerage_Running_Time=%s\n", $1, $2, $3 }'
