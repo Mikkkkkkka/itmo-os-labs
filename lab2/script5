@@ -1,0 +1,37 @@
+#!/bin/bash
+
+touch ./script4output.tmp
+touch ./values.tmp
+bash ./script4 >./script4output.tmp
+
+while IFS= read -r LINE; do
+  NEXT=$(echo "$LINE" | grep -oE '[0-9]+' | paste -sd ' ')
+  echo $NEXT >>./values.tmp
+done <./script4output.tmp
+
+N_AND_M=""
+GROUP_PPID=$(cat ./values.tmp | head -n 1 | awk '{ print $2 }')
+GROUP_COUNT=0
+GROUP_ART=0
+
+while IFS= read -r LINE; do
+  CURRENT_PPID=$(echo "$LINE" | awk '{ print $2 }')
+  CURRENT_ART=$(echo "$LINE" | awk '{ print $3 }')
+
+  if [[ "$CURRENT_PPID" -ne "$GROUP_PPID" ]]; then
+    GROUP_AVERAGE_ART=$(("$GROUP_ART / $GROUP_COUNT"))
+    N_AND_M+="$GROUP_PPID\t$GROUP_AVERAGE_ART\n"
+
+    GROUP_COUNT=0
+    GROUP_PPID="$CURRENT_PPID"
+    GROUP_ART="$CURRENT_ART"
+  fi
+
+  GROUP_COUNT=$(($GROUP_COUNT + 1))
+  GROUP_ART=$(($GROUP_ART + $CURRENT_ART))
+done <./values.tmp
+
+rm ./script4output.tmp
+rm ./values.tmp
+
+printf "$N_AND_M" | awk '{ printf "Average_Running_Children_of_Parent=%s is %s\n", $1, $2 }'
