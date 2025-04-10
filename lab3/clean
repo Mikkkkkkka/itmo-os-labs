@@ -1,0 +1,9 @@
+#!bin/bash
+
+CRONTAB_ENTRY='*/5 * * * 0 "bash ~/osProjects/itmo-os-labs/lab3/script1"'
+
+echo "Cleaning remaining files after lab3..."
+
+# script1-2
+rm -r ~/test/
+rm ~/report

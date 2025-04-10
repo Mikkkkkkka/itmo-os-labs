@@ -1,0 +1,12 @@
+#!/bin/bash
+
+inf_calc() {
+  A=1000
+  while true; do
+    A=$(($A - 7))
+  done
+}
+
+inf_calc &
+inf_calc &
+inf_calc &

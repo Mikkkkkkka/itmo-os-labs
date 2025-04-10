@@ -1,0 +1,12 @@
+#!/bin/bash
+
+bash ./script1 $
+sleep 120
+
+bash ./script1 &
+
+(tail -f ~/report) |
+  while true; do
+    read LINE
+    echo "$LINE"
+  done

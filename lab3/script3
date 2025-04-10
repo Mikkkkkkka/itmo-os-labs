@@ -1,0 +1,2 @@
+# crontab -e
+# */5 * * * 0 "bash ~/osProjects/itmo-os-labs/lab3/script1"

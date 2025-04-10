@@ -1,0 +1,19 @@
+#!/bin/bash
+
+while true; do
+  read LINE
+  case "$LINE" in
+  "+")
+    kill -USR1 $(cat ./.handler_pid)
+    ;;
+  "*")
+    kill -USR2 $(cat ./.handler_pid)
+    ;;
+  "TERM")
+    kill -TERM $(cat ./.handler_pid)
+    echo "Stopping..."
+    break
+    ;;
+  *) ;;
+  esac
+done

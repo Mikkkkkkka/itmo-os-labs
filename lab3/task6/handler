@@ -1,0 +1,29 @@
+#!/bin/bash
+
+echo "$$" >./.handler_pid
+
+VAL=1
+OPERATION="+"
+ACTIVE=true
+
+usr1() {
+  OPERATION="+"
+}
+
+usr2() {
+  OPERATION="*"
+}
+
+term() {
+  ACTIVE=false
+}
+
+trap 'usr1' USR1
+trap 'usr2' USR2
+trap 'term' TERM
+
+while $ACTIVE; do
+  VAL=$(echo "$VAL $OPERATION 2" | bc)
+  echo "VAL=$VAL; OPERATION=\"$OPERATION\""
+  sleep 1
+done

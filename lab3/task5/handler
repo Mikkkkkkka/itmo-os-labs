@@ -1,0 +1,24 @@
+#!/bin/bash
+
+OPERATION="+"
+RESULT=1
+
+(tail -f ./pipe) |
+  while true; do
+    read LINE
+    case $LINE in
+    "QUIT")
+      echo "Result: $RESULT"
+      echo "Quitting..."
+      killall "generator"
+      rm ./pipe
+      break
+      ;;
+    "+" | "*")
+      OPERATION=$LINE
+      ;;
+    *)
+      RESULT=$(echo "$RESULT $OPERATION $LINE" | bc) || sleep 0
+      ;;
+    esac
+  done
