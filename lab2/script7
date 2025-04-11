@@ -37,4 +37,4 @@ done
 echo -e $PIDBYTESDIFF |
   sort -rnk 2 |
   head -n 3 |
-  awk '{ printf "PID: %s\nREADMEMDIFF: %s\n\n", $2, $1 }'
+  awk '{ printf "PID: %s\nREADMEMDIFF: %s\n\n", $1, $2 }'

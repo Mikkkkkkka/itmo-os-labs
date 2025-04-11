@@ -1,0 +1,6 @@
+#!/bin/bash
+
+ps -xa |
+  awk '{ print  $1 }' |
+  sort -rn |
+  head -n 1
