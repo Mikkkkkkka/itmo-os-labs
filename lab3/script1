@@ -1,8 +1,8 @@
 #!/bin/bash
 
 mkdir ~/test 2>/dev/null &&
-  echo "catalog test was created successfully" >~/report &&
+  echo "catalog test was created successfully" >>~/report &&
   touch ~/test/$(date +"%Y-%m-%d_%H:%M:%S")
 
 ping www.net_nikogo.ru 2>/dev/null ||
-  echo "$(date +"%Y-%m-%d_%H:%M:%S") failed to ping www.net_nidkogo.ru" >~/report
+  echo "$(date +"%Y-%m-%d_%H:%M:%S") failed to ping www.net_nidkogo.ru" >>~/report

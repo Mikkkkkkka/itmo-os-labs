@@ -1,0 +1,26 @@
+#!/bin/bash
+
+./inf_calc
+
+FIRST_PROC=$(pgrep "inf_calc" | head -n 1)
+NICENESS=$(ps -o ni -p "$FIRST_PROC" | tail -n 1)
+
+while true; do
+  CPU_USAGE=$(ps -p "$FIRST_PROC" -o %cpu --no-headers)
+  CPU_USAGE=${CPU_USAGE%.*}
+
+  if [[ $CPU_USAGE -le 10 ]]; then
+    continue
+  fi
+
+  if [[ $NICENESS -ne 20 ]]; then
+    renice -n $((NICENESS + 1)) -p "$FIRST_PROC"
+    NICENESS=$((NICENESS + 1))
+    continue
+  fi
+
+  kill -STOP "$FIRST_PROC"
+  sleep 10
+  kill -CONT "$FIRST_PROC"
+  renice -n 1 -p "$FIRST_PROC"
+done
