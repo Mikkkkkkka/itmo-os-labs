@@ -1,0 +1,36 @@
+#!/bin/bash
+
+RECENT_BACKUP=""
+for BACKUP in $(ls ~ | grep 'BACKUP-'); do
+  DATE=$(date -d "$(echo "$BACKUP" | sed 's/BACKUP-//g')" +%s)
+  CURRENT_DATE=$(date +%s)
+  DURATION=$((CURRENT_DATE - DATE))
+  if [[ $(($DURATION / 86400)) -lt "7" ]]; then
+    RECENT_BACKUP=$BACKUP
+    break
+  fi
+done
+
+if [[ -z $RECENT_BACKUP ]]; then
+  RECENT_BACKUP="BACKUP-$(date +"%Y-%m-%d")"
+  mkdir ~/$RECENT_BACKUP
+  echo "===== Created new backup catalogue: $RECENT_BACKUP =====" >>~/backup-report
+  for FILE in $(ls ~/source/); do
+    cp "$HOME/source/$FILE" "$HOME/$RECENT_BACKUP/$FILE"
+    echo "Added file \"~/source/$FILE\" to the new backup catalogue" >>~/backup-report
+  done
+  exit
+fi
+
+for FILE in $(ls ~/source/); do
+  if [[ ! -f "$HOME/$RECENT_BACKUP/$FILE" ]]; then
+    cp "$HOME/source/$FILE" "$HOME/$RECENT_BACKUP/$FILE"
+    echo "Added file \"~/source/$FILE\" to the new backup catalogue" >>~/backup-report
+    continue
+  fi
+  if [[ $(ls -l "$HOME/$RECENT_BACKUP/$FILE" | awk '{ print $5 }') -eq $(ls -l "$HOME/source/$FILE" | awk '{ print $5 }') ]]; then
+    continue
+  fi
+  cp "$HOME/source/$FILE" "$HOME/$RECENT_BACKUP/$FILE.$(date +"%Y-%m-%d")"
+  echo "Added an updated version of file \"~/source/$FILE\" to the new backup catalogue" >>~/backup-report
+done
