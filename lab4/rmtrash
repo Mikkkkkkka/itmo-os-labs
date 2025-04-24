@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [[ -z $1 ]]; then
+  echo "Usage: rmtrash TARGET"
+  exit
+fi
+
+if [[ -n $2 ]]; then
+  echo "Extra arguments will be ignored"
+fi
+
+ls ~/.trash 2>/dev/null || mkdir ~/.trash
+
+LINK_NUM=0
+for LINK in $(ls ~/.trash); do
+  LINK_NUM=$((LINK_NUM + 1))
+done
+
+ln --physical "$PWD/$1" "$HOME/.trash/$LINK_NUM"
+rm $1
+
+echo "$LINK_NUM $PWD/$1" >>~/.trash.log

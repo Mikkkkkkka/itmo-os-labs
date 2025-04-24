@@ -1,0 +1,42 @@
+#!/bin/bash
+
+if [[ -z $1 || $1 -eq "--help" ]]; then
+  echo "Usage: untrash TARGET"
+  exit
+fi
+
+if [[ -n $2 ]]; then
+  echo "Extra arguments will be ignored"
+fi
+
+for LOG in "$(cat ~/.trash.log | grep -E "$1$")"; do
+
+  LINK=$(echo $LOG | awk '{ print $1 }')
+  ORIGINAL_PATH=$(echo $LOG | awk '{ print $2 }')
+  ORIGINAL_NAME=$(basename $ORIGINAL_PATH)
+  ORIGINAL_DIR=$(dirname $ORIGINAL_PATH)
+
+  echo -n "Untrash \"$ORIGINAL_PATH\"? [y/N]: "
+  read CONFIRM
+
+  if [[ $CONFIRM != "y" && $CONFIRM != "Y" ]]; then
+    continue
+  fi
+
+  if [[ -f $ORIGINAL_PATH ]]; then
+    echo "The file by the original path already exists how would you like to name the new file?"
+    read NEW_NAME
+    ln --physical "$HOME/.trash/$LINK" "$ORIGINAL_DIR/$NEW_NAME"
+    continue
+  fi
+
+  ln --physical "$HOME/.trash/$LINK" "$ORIGINAL_PATH" || {
+    echo "Failed to untrash the file to the original path, untrashing to home instead."
+    ln --physical "$HOME/.trash/$LINK" "$HOME/.trash/$ORIGINAL_NAME"
+    continue
+  }
+  ORIGINAL_PATH=$(echo $ORIGINAL_PATH | sed 's/\//\\\//g')
+  echo $ORIGINAL_PATH
+  sed -i "/$ORIGINAL_PATH/d" ~/.trash.log
+  rm ~/.trash/$LINK
+done
