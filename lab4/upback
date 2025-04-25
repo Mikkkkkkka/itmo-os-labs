@@ -1,0 +1,22 @@
+#!/bin/bash
+
+EPOCH="1970-01-01"
+RECENT_BACKUP="BACKUP-$EPOCH"
+for BACKUP in $(ls ~ | grep 'BACKUP-'); do
+  DATE=$(date -d "$(echo "$BACKUP" | sed 's/BACKUP-//g')" +%s)
+  RECENT_DATE=$(date -d "$(echo "$RECENT_BACKUP" | sed 's/BACKUP-//g')" +%s)
+  if [[ $DATE -gt $RECENT_DATE ]]; then
+    RECENT_BACKUP=$BACKUP
+  fi
+done
+
+[[ $RECENT_BACKUP != "BACKUP-$EPOCH" ]] || {
+  echo "No Backups!"
+  exit 1
+}
+
+[[ -d "$HOME/restore" ]] || mkdir "$HOME/restore"
+
+for FILE in $(ls "$HOME/$RECENT_BACKUP" | grep -Ev '\.[0-9]{4}-[0-9]{2}-[0-9]{2}$'); do
+  cp "$HOME/$RECENT_BACKUP/$FILE" "$HOME/restore/$FILE"
+done

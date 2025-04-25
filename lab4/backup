@@ -31,6 +31,7 @@ for FILE in $(ls ~/source/); do
   if [[ $(ls -l "$HOME/$RECENT_BACKUP/$FILE" | awk '{ print $5 }') -eq $(ls -l "$HOME/source/$FILE" | awk '{ print $5 }') ]]; then
     continue
   fi
-  cp "$HOME/source/$FILE" "$HOME/$RECENT_BACKUP/$FILE.$(date +"%Y-%m-%d")"
+  mv "$HOME/$RECENT_BACKUP/$FILE" "$HOME/$RECENT_BACKUP/$FILE.$(date +"%Y-%m-%d")"
+  cp "$HOME/source/$FILE" "$HOME/$RECENT_BACKUP/$FILE"
   echo "Added an updated version of file \"~/source/$FILE\" to the new backup catalogue" >>~/backup-report
 done
